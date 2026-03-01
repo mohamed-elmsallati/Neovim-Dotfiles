@@ -1,0 +1,22 @@
+return {
+	"LuxVim/nvim-luxmotion",
+	config = function()
+		require("luxmotion").setup({
+			cursor = {
+				duration = 150,
+				easing = "ease-out",
+				enabled = true,
+			},
+			scroll = {
+				duration = 240,
+				easing = "ease-in-out",
+				enabled = true,
+			},
+			performance = { enabled = false },
+			keymaps = {
+				cursor = true,
+				scroll = true,
+			},
+		})
+	end,
+}
