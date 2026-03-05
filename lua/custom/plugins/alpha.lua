@@ -69,31 +69,11 @@ return {
 				},
 				{
 					pane = 2,
+					section = "projects",
 					title = "Projects",
-					icon = " ",
-					indent = 20,
-					padding = 1,
-					-- We use the 'items' key to manually provide the list
-					items = function()
-						local projects = require("project_nvim.project").get_recent_projects()
-						local items = {}
-						-- Only show the last 5 projects to keep it clean
-						for i = 1, math.min(#projects, 5) do
-							local path = projects[i]
-							local name = vim.fn.fnamemodify(path, ":t")
-							table.insert(items, {
-								text = { { "󱏒 ", hl = "SnacksDashboardIcon" }, { name, hl = "SnacksDashboardDesc" } },
-								action = function()
-									vim.api.nvim_set_current_dir(path)
-									Snacks.picker.files({ cwd = path })
-								end,
-								key = tostring(i), -- Assigns keys 1, 2, 3... to projects
-							})
-						end
-						return items
-					end,
+					icon = "                                     ",
+					indent = 25,
 				},
-
 				{ section = "startup" },
 			},
 		},

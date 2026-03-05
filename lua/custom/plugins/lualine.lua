@@ -14,22 +14,9 @@ return {
 		if status and type(tokyonight) == "table" then
 			local modes = { "normal", "insert", "visual", "replace", "command" }
 			for _, mode in ipairs(modes) do
-				-- 1. Keep your transparency fix
+				-- 1. Keep transparency fix
 				if tokyonight[mode] and tokyonight[mode].c then
 					tokyonight[mode].c.bg = "none"
-				end
-
-				-- 2. NEW: Force Section A (Mode) to be bold
-				if tokyonight[mode] and tokyonight[mode].a then
-					tokyonight[mode].a.gui = "bold"
-				end
-
-				if tokyonight[mode] and tokyonight[mode].b then
-					tokyonight[mode].b.gui = "bold"
-				end
-				-- 3. NEW: Force Section Z (Location) to be bold
-				if tokyonight[mode] and tokyonight[mode].z then
-					tokyonight[mode].z.gui = "bold"
 				end
 			end
 		else
@@ -45,7 +32,12 @@ return {
 			},
 			tabline = {
 				lualine_a = {
-					{ "mode", separator = { right = "" }, padding = { left = 2, right = 1 }, gui = "bold" },
+					{
+						"mode",
+						separator = { right = "" },
+						padding = { left = 2, right = 1 },
+						color = { gui = "bold" },
+					},
 				},
 				lualine_b = {
 					{
@@ -54,7 +46,7 @@ return {
 						newfile_status = false, -- Display new file status
 						path = 0, -- 0: Just the filename
 						symbols = {
-							modified = " ", -- Use a Nerd Font circle
+							modified = " 󰫢", -- Use a Nerd Font circle
 							readonly = " 󰌾", -- Use a lock icon
 							unnamed = " ", -- Use an empty file icon
 							newfile = " 󰝒", -- Use a "plus" file icon
@@ -64,19 +56,50 @@ return {
 						padding = { left = 2, right = 1 },
 					},
 				},
-				lualine_c = {},
+				lualine_c = {
+					{
+						"branch",
+						icon = "󰊢",
+						color = { bg = "#24283b", fg = "#e0af68" },
+						separator = { right = "" },
+					},
+					{
+						"diff",
+						symbols = {
+							added = "󰫢 ",
+							modified = "󰫣 ",
+							removed = "󰯙 ",
+						},
+						color = { bg = "#24283b" }, -- Matches the branch background
+						separator = { right = "" },
+						source = function()
+							local gitsigns = vim.b.gitsigns_status_dict
+							if gitsigns then
+								return {
+									added = gitsigns.added,
+									modified = gitsigns.changed,
+									removed = gitsigns.deleted,
+								}
+							end
+						end,
+					},
+				},
 				lualine_x = {},
 				lualine_y = {
 					{
 						"diagnostics",
-						gui = "bold",
 						color = { bg = "#24283b" },
 						separator = { left = "" },
 						padding = { left = 1, right = 2 },
 					},
 				},
 				lualine_z = {
-					{ "location", separator = { left = "" }, padding = { left = 1, right = 2 } },
+					{
+						"location",
+						color = { gui = "bold" },
+						separator = { left = "" },
+						padding = { left = 1, right = 2 },
+					},
 				},
 			},
 			sections = {
