@@ -1,28 +1,50 @@
-return { -- Collection of various small independent plugins/modules
-	"nvim-mini/mini.nvim",
+return {
+	"echasnovski/mini.nvim",
 	config = function()
-		-- Better Around/Inside textobjects
-		--
-		-- Examples:
-		--  - va)  - [V]isually select [A]round [)]paren
-		--  - yinq - [Y]ank [I]nside [N]ext [Q]uote
-		--  - ci'  - [C]hange [I]nside [']quote
+		-- 1. Better Around/Inside textobjects
 		require("mini.ai").setup({ n_lines = 500 })
 
-		-- Add/delete/replace surroundings (brackets, quotes, etc.)
-		--
-		-- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-		-- - sd'   - [S]urround [D]elete [']quotes
-		-- - sr)'  - [S]urround [R]eplace [)] [']
+		-- 2. Add/delete/replace surroundings
 		require("mini.surround").setup()
 
-		-- cursor location to LINE:COLUMN
-		---@diagnostic disable-next-line: duplicate-set-field
-		-- statusline.section_location = function()
-		-- return "%2l:%-2v"
-		-- end
+		-- 3. Indent Scope (No animation to prevent cursor jumps)
+		require("mini.indentscope").setup({
+			symbol = "│",
+			options = { try_as_border = true },
+			draw = {
+				delay = 100, -- Small delay (in ms) before showing to prevent flicker
+				animation = require("mini.indentscope").gen_animation.exponential({
+					duration = 200, -- Animation speed in ms
+					unit = "total", -- 'total' duration or 'step' per line
+				}),
+			},
+		})
+		-- Then re-enable it ONLY for specific filetypes if needed,
+		-- or just use the following to target the dashboard:
+		vim.api.nvim_create_autocmd("BufEnter", {
+			pattern = "*",
+			callback = function()
+				if vim.bo.filetype == "snacks_dashboard" then
+					vim.b.miniindentscope_disable = true
+				end
+			end,
+		})
 
-		-- ... and there is more!
-		--  Check out: https://github.com/nvim-mini/mini.nvim
+		-- 4. Animate (Fixed timing functions)
+		local animate = require("mini.animate")
+		animate.setup({
+			cursor = {
+				enable = true,
+				timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
+			},
+			scroll = {
+				enable = true,
+				-- 'quadratic' is a smooth, reliable curve for scrolling
+				timing = animate.gen_timing.quadratic({ duration = 150, unit = "total" }),
+			},
+			resize = { enable = false },
+			open = { enable = false },
+			close = { enable = false },
+		})
 	end,
 }
